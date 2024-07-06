@@ -165,13 +165,13 @@ export const useNoteCollection = createCollection<NoteModel, NoteCollection>(
       },
       async bookmark(id: string) {
         const note = getState().get(id)
-        const bookmark = note?.hasMemory
+        const bookmark = note?.bookmark
         await apiClient.note.proxy(id).patch({ data: { hasMemory: !bookmark } })
         setState((state) => {
           const note = state.get(id)
           if (note) {
             const nextNote = { ...note }
-            nextNote.hasMemory = !bookmark
+            nextNote.bookmark = !bookmark
             requestAnimationFrame(() => {
               getState().addOrPatch(nextNote)
             })

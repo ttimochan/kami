@@ -136,7 +136,7 @@ const TimeLineView: NextPage<TimeLineViewProps> = (props) => {
   }
 
   notes
-    .filter((n) => (props.memory ? n.hasMemory : true))
+    .filter((n) => (props.memory ? n.bookmark : true))
     .forEach((note) => {
       const date = new Date(note.created)
       const year = date.getFullYear()
@@ -152,7 +152,7 @@ const TimeLineView: NextPage<TimeLineViewProps> = (props) => {
         href: '/notes/[id]',
         type: ArticleType.Note,
         id: note.id,
-        important: note.hasMemory,
+        important: note.bookmark,
       }
 
       sortedMap.set(

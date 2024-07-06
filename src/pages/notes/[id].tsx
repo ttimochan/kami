@@ -40,7 +40,6 @@ import {
   useSetHeaderShare,
 } from '~/hooks/app/use-header-meta'
 import { useJumpToSimpleMarkdownRender } from '~/hooks/app/use-jump-to-render'
-import { useNoteMusic } from '~/hooks/app/use-music'
 import { useLoadSerifFont } from '~/hooks/ui/use-load-serif-font'
 import { isEqualObject, omit } from '~/utils/_'
 import { imagesRecord2Map } from '~/utils/images'

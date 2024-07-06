@@ -33,7 +33,7 @@ export const NoteFooterActionBar: FC<{ id: string }> = ({ id }) => {
   }
   const nid = note.nid
   const { mood, weather } = note
-  const isSecret = note.secret ? dayjs(note.secret).isAfter(new Date()) : false
+  const isSecret = note.publicAt ? dayjs(note.publicAt).isAfter(new Date()) : false
 
   const donateConfig = themeConfig.function.donate
 

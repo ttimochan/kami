@@ -73,11 +73,11 @@ const RecentlyPage: NextPage = () => {
   const { data: fetchedData, isLoading } = useSWR(
     ['recent', fetchBefore],
     async ([, before]) => {
-      const { data } = await apiClient.shorthand.getList(
+      const { data } = await apiClient.shorthand.getList({
         before,
-        undefined,
-        FETCH_SIZE,
-      )
+        after: undefined,
+        size: FETCH_SIZE,
+      })
 
       if (data.length < FETCH_SIZE) {
         setHasNext(false)

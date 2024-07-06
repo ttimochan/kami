@@ -88,7 +88,7 @@ export const NoteLayout = forwardRef<HTMLElement, NoteLayoutProps>(
 
     const url = useAppStore((state) => state.appUrl)
 
-    const bookmark = useNoteCollection((state) => state.get(id)?.hasMemory)
+    const bookmark = useNoteCollection((state) => state.get(id)?.bookmark)
     const isHide = useNoteCollection((state) => state.get(id)?.hide)
     const banner = useNoteMetaBanner(id)
     const onMarkToggle = useCallback(async () => {

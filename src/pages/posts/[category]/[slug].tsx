@@ -53,6 +53,7 @@ import { springScrollToTop } from '~/utils/spring'
 import { noop } from '~/utils/utils'
 
 import { Copyright } from '../../../components/widgets/Copyright'
+import { AckRead } from '~/components/common/AckRead'
 
 const CommentLazy = lazy(() =>
   import('~/components/widgets/Comment').then((mo) => ({
@@ -302,6 +303,7 @@ export const PostView: PageOnlyProps = (props) => {
 
   return (
     <>
+      <AckRead type='post' id={post.id} />
       <Seo$ id={post.id} />
       <ArticleLayout
         title={post.title}

@@ -50,6 +50,7 @@ import { noop } from '~/utils/utils'
 
 import { Seo } from '../../components/app/Seo'
 import { isDev } from '../../utils/env'
+import { AckRead } from '~/components/common/AckRead'
 
 const NoteTopic = lazy(() =>
   import('~/components/in-page/Note/NoteTopic').then((mo) => ({
@@ -159,7 +160,8 @@ const NoteView: React.FC<{ id: string }> = memo((props) => {
     note.title,
     `手记${note.topic ? ` / ${note.topic.name}` : ''}`,
   )
-  useNoteMusic(note.music)
+  // Music is deprecated
+  // useNoteMusic(note.music)
   useJumpToSimpleMarkdownRender(note.id)
 
   const { title, id, text } = note
@@ -178,9 +180,9 @@ const NoteView: React.FC<{ id: string }> = memo((props) => {
     }`
   }, [note.count.like, note.count.read, note.created, note.modified, wordCount])
 
-  const isSecret = note.secret ? dayjs(note.secret).isAfter(new Date()) : false
-  const secretDate = useMemo(() => new Date(note.secret!), [note.secret])
-  const dateFormat = note.secret
+  const isSecret = note.publicAt ? dayjs(note.publicAt).isAfter(new Date()) : false
+  const secretDate = useMemo(() => new Date(note.publicAt!), [note.publicAt])
+  const dateFormat = note.publicAt
     ? Intl.DateTimeFormat('zh-cn', {
         hour12: false,
         hour: 'numeric',
@@ -214,6 +216,7 @@ const NoteView: React.FC<{ id: string }> = memo((props) => {
 
   return (
     <>
+      <AckRead id={id} type="note" />
       {createElement(Seo, {
         title,
         description,

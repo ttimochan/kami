@@ -40,6 +40,7 @@ import {
   useSetHeaderShare,
 } from '~/hooks/app/use-header-meta'
 import { useJumpToSimpleMarkdownRender } from '~/hooks/app/use-jump-to-render'
+import { useNoteMusic } from '~/hooks/app/use-music'
 import { useLoadSerifFont } from '~/hooks/ui/use-load-serif-font'
 import { isEqualObject, omit } from '~/utils/_'
 import { imagesRecord2Map } from '~/utils/images'
@@ -159,8 +160,9 @@ const NoteView: React.FC<{ id: string }> = memo((props) => {
     note.title,
     `手记${note.topic ? ` / ${note.topic.name}` : ''}`,
   )
-  // Music is deprecated
-  // useNoteMusic(note.music)
+  // Music is deprecated. Use custom meta instead.
+  // @ts-expect-error Meta 理论上是自定义的，但是 api-client 却将其 hardcode 了。
+  useNoteMusic(note.meta?.music as string)
   useJumpToSimpleMarkdownRender(note.id)
 
   const { title, id, text } = note

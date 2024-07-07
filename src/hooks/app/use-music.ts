@@ -1,7 +1,4 @@
-import { useEffect, useMemo } from 'react'
-
-import type { NoteMusicRecord } from '@mx-space/api-client'
-
+import { useEffect } from 'react'
 import { useMusicStore } from '~/atoms/music'
 
 export const useMusic = (musicList: number[] | null) => {
@@ -24,13 +21,6 @@ export const useMusic = (musicList: number[] | null) => {
   }, [musicList])
 }
 
-export const useNoteMusic = (music?: NoteMusicRecord[]) => {
-  const ids = useMemo(
-    () =>
-      music && Array.isArray(music) && music.length > 0
-        ? music.filter((m) => m.id && m.type === 'netease').map((m) => ~~m.id)
-        : null,
-    [music],
-  )
-  useMusic(ids)
+export const useNoteMusic = (music?: string) => {
+  useMusic(music ? [parseInt(music)] : null)
 }

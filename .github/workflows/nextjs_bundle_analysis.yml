@@ -7,6 +7,9 @@ on:
       - main # change this if your default branch is named differently
       - master
       - dev
+    paths-ignore:
+      - README.md
+      - LICENSE
   workflow_dispatch:
 
 defaults:

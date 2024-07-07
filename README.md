@@ -11,6 +11,11 @@
 
 - Release 阶段 Docker Image 将不会发布在原 Docker Hub 中. 未来有关 Docker Image 的发布目前待定。
 
+## BREAKING CHANGES
+
+- Note Music 需要在「附加字段」中加入 `music` 字段，内容为音乐的 Netease ID. 且仅支持一个音乐 ID。
+- Favorite Music 由于 (wibus-wee/kami#1)[https://github.com/wibus-wee/kami/issues/1] 的缘故暂时失效
+
 以下是原项目的 README：
 
 ---

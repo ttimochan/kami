@@ -14,7 +14,7 @@ export const XLogSummary: FC<{
     [`getSummary`, cid],
     async ([, cid]) => {
       return apiClient.proxy.fn.xlog.get_summary.get<{
-        data: string
+        summary: string
       }>({
         params: {
           cid,
@@ -47,7 +47,7 @@ export const XLogSummary: FC<{
 
       <AnimateChangeInHeight duration={0.3}>
         <p className="text-gray-1 text-sm leading-loose">
-          {isLoading ? '加载中...' : error ? '请求错误' : data?.data}
+          {isLoading ? '加载中...' : error ? '请求错误' : data?.summary}
         </p>
         {isLoading && (
           <p className="text-gray-2 text-right text-sm">

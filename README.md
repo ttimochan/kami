@@ -5,10 +5,7 @@
 > 
 > **更推荐使用 [Shiro](https://github.com/Innei/Shiro) 以获得更好的体验。**
 
-<sup>如果你发现了 Kami 与 Core 的不兼容问题，请提交 issue 并描述具体问题，我会尽快修复。</sup>
-
-- Note Music 需要在「附加字段」中加入 `music` 字段，内容为音乐的 Netease ID. 且仅支持一个音乐 ID。
-- Favorite Music 暂时失效
+<sup>如果你发现了 Kami 与 Core 的不兼容问题，请提交 issue 并描述具体问题，团队成员会尽快修复。</sup>
 
 ---
 

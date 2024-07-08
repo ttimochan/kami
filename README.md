@@ -84,7 +84,7 @@ Live Demo:
 
 > 在此之前，请先完成部署 Mix Space
 
-参考[文档](https://mx-space.js.org/deploy/index.html#%E9%83%A8%E7%BD%B2-kami)
+参考[文档](https://mx-space.js.org/themes/kami)
 
 ## Clone
 

@@ -47,6 +47,7 @@ declare module '@mx-space/api-client' {
     cover?: string
     banner?: string | { type: string; message: string }
     xLog?: XLogMeta
+    music?: string
   }
   interface TextBaseModel extends BaseCommentIndexModel {
     meta?: PostMeta

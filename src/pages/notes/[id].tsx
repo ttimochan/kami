@@ -161,8 +161,7 @@ const NoteView: React.FC<{ id: string }> = memo((props) => {
     `手记${note.topic ? ` / ${note.topic.name}` : ''}`,
   )
   // Music is deprecated. Use custom meta instead.
-  // @ts-expect-error Meta 理论上是自定义的，但是 api-client 却将其 hardcode 了。
-  useNoteMusic(note.meta?.music as string)
+  useNoteMusic(note.meta?.music)
   useJumpToSimpleMarkdownRender(note.id)
 
   const { title, id, text } = note

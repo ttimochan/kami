@@ -74,7 +74,7 @@ const LikeCard = (props: UniversalProps) => {
       <SectionCard
         getRandomUnRepeatImage={getRandomUnRepeatImage}
         title={`${title || '点赞'} (${like ?? 0})`}
-        desc={desc || '如果你喜欢的话点个赞呗'}
+        desc={desc || '喜欢的话点个赞呗'}
         src={cover}
         href="/like_this"
         onClick={useCallback((e) => {

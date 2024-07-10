@@ -335,7 +335,7 @@ export const CommentBox: FC<{
         )}
         placeholder={
           !logged
-            ? '嘿 ︿(￣︶￣)︿, 留个评论好不好嘛~'
+            ? '嘿 ︿(￣︶￣)︿, 留个 Message 好不好嘛~'
             : '主人，说点什么好呢？'
         }
       />
@@ -437,9 +437,9 @@ const MarkdownSupport = () => {
       }
     >
       <div className="leading-7">
-        <p>评论支持部分 Markdown 语法</p>
-        <p>评论可能被移入垃圾箱</p>
-        <p>评论可能需要审核，审核通过后才会显示</p>
+        <p>Comment 支持部分 Markdown 语法</p>
+        <p>Comment 可能被移入垃圾箱</p>
+        <p>Comment 可能需要审核，审核通过后才会显示</p>
       </div>
     </FloatPopover>
   )

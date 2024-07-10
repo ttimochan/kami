@@ -121,7 +121,7 @@ const TimeLineView: NextPage<TimeLineViewProps> = (props) => {
       const year = date.getFullYear()
       const data: MapType = {
         title: post.title,
-        meta: [post.category.name, '博文'],
+        meta: [post.category.name, 'Posts'],
         date,
         as: `/posts/${post.category.slug}/${post.slug}`,
         href: `/posts/[category]/[slug]`,
@@ -145,7 +145,7 @@ const TimeLineView: NextPage<TimeLineViewProps> = (props) => {
         meta: [
           note.mood ? `心情：${note.mood}` : undefined,
           note.weather ? `天气：${note.weather}` : undefined,
-          '手记',
+          'Notes',
         ].filter(Boolean) as string[],
         date,
         as: `/notes/${note.nid}`,

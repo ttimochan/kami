@@ -158,7 +158,7 @@ const NoteView: React.FC<{ id: string }> = memo((props) => {
   useLoadSerifFont()
   useSetHeaderMeta(
     note.title,
-    `手记${note.topic ? ` / ${note.topic.name}` : ''}`,
+    `Notes${note.topic ? ` / ${note.topic.name}` : ''}`,
   )
   // Music is deprecated. Use custom meta instead.
   useNoteMusic(note.meta?.music)

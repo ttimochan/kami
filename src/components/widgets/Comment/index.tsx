@@ -143,15 +143,15 @@ const CommentWrap: FC<CommentWrapProps> = (props) => {
       {allowComment && (
         <h1 className="headline">
           {comments.length
-            ? `共有${comments.length}条评论`
-            : '亲亲留个评论再走呗'}
+            ? `共有${comments.length}条 Comments`
+            : '亲亲留个 Message 再走呗'}
         </h1>
       )}
 
       {allowComment ? (
         <CommentBox onSubmit={handleComment} refId={id} />
       ) : (
-        <h1 className="headline">主人禁止了评论</h1>
+        <h1 className="headline">主人禁止了 Comment</h1>
       )}
       <span id="comment-anchor" />
       {commentShow ? (
@@ -195,7 +195,7 @@ const Comment: typeof CommentWrap = (props) => {
   if (disable) {
     return (
       <h1 className="headline dark:text-shizuku-text !mt-6 text-lg font-semibold">
-        全站评论功能未开放
+        全站 Comment 功能未开放
       </h1>
     )
   }

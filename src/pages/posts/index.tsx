@@ -46,7 +46,7 @@ const PostListPage: NextPage<PaginateResult<PostModel>> = () => {
 
   return (
     <ArticleLayout>
-      <Seo title="博文" />
+      <Seo title="Posts" />
 
       <article key="note">
         {posts.length > 0 ? (

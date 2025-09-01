@@ -35,8 +35,7 @@ export const HighLighter: FC<Props> = (props) => {
 
   useInsertionEffect(() => {
     const css = loadStyleSheet(
-      `https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism-themes/1.9.0/prism-one-${
-        isPrintMode ? 'light' : colorMode
+      `https://cdn.jsdelivr.net/npm/prism-themes@1.9.0/themes/prism-one-${isPrintMode ? 'light' : colorMode
       }.css`,
     )
 
@@ -51,21 +50,21 @@ export const HighLighter: FC<Props> = (props) => {
   }, [colorMode, isPrintMode])
   useInsertionEffect(() => {
     loadStyleSheet(
-      'https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.css',
+      'https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/line-numbers/prism-line-numbers.min.css',
     )
 
     Promise.all([
       loadScript(
-        'https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.23.0/components/prism-core.min.js',
+        'https://cdn.jsdelivr.net/npm/prismjs@1.23.0/components/prism-core.min.js',
       ),
     ])
       .then(() =>
         Promise.all([
           loadScript(
-            'https://lf26-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.23.0/plugins/autoloader/prism-autoloader.min.js',
+            'https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/autoloader/prism-autoloader.min.js',
           ),
           loadScript(
-            'https://lf3-cdn-tos.bytecdntp.com/cdn/expire-1-M/prism/1.23.0/plugins/line-numbers/prism-line-numbers.min.js',
+            'https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/line-numbers/prism-line-numbers.min.js',
           ),
         ]),
       )

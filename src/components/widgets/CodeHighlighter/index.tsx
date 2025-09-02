@@ -35,7 +35,7 @@ export const HighLighter: FC<Props> = (props) => {
 
   useInsertionEffect(() => {
     const css = loadStyleSheet(
-      `https://cdn.jsdelivr.net/npm/prism-themes@1.9.0/themes/prism-one-${isPrintMode ? 'light' : colorMode
+      `https://cdn.timochan.cn/css/prism-one-${isPrintMode ? 'light' : colorMode
       }.css`,
     )
 
@@ -50,21 +50,21 @@ export const HighLighter: FC<Props> = (props) => {
   }, [colorMode, isPrintMode])
   useInsertionEffect(() => {
     loadStyleSheet(
-      'https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/line-numbers/prism-line-numbers.min.css',
+      'https://cdn.timochan.cn/css/prism-line-numbers.min.css',
     )
 
     Promise.all([
       loadScript(
-        'https://cdn.jsdelivr.net/npm/prismjs@1.23.0/components/prism-core.min.js',
+        'https://cdn.timochan.cn/js/prism-core.min.js',
       ),
     ])
       .then(() =>
         Promise.all([
           loadScript(
-            'https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/autoloader/prism-autoloader.min.js',
+            'https://cdn.timochan.cn/js/prism-autoloader.min.js',
           ),
           loadScript(
-            'https://cdn.jsdelivr.net/npm/prismjs@1.23.0/plugins/line-numbers/prism-line-numbers.min.js',
+            'https://cdn.timochan.cn/js/prism-line-numbers.min.js',
           ),
         ]),
       )

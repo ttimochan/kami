@@ -5,6 +5,21 @@ import {
   simpleInlineRegex,
 } from 'markdown-to-jsx'
 import React from 'react'
+import { useTranslations } from 'next-intl'
+
+const SpoilerWithTitle: React.FC<{
+  node: unknown
+  output: (content: unknown[], state: any) => React.ReactNode
+  state?: any
+}> = ({ node, output, state }) => {
+  const t = useTranslations('common')
+  const content = (node as { content?: unknown[] }).content ?? []
+  return (
+    <del className="spoiler" title={t('spoilerHint')}>
+      {output(content, state!)}
+    </del>
+  )
+}
 
 // ||Spoilder||
 export const SpoilderRule: MarkdownToJSX.Rule = {
@@ -15,9 +30,12 @@ export const SpoilderRule: MarkdownToJSX.Rule = {
   parse: parseCaptureInline,
   react(node, output, state?) {
     return (
-      <del key={state?.key} className="spoiler" title="你知道的太多了">
-        {output(node.content, state!)}
-      </del>
+      <SpoilerWithTitle
+        key={state?.key}
+        node={node}
+        output={output}
+        state={state}
+      />
     )
   },
 }

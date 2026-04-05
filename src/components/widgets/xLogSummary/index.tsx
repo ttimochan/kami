@@ -1,24 +1,28 @@
-import type { FC, SVGProps } from 'react'
+import type { FC, ReactNode, SVGProps } from 'react'
 import SWR from 'swr'
+import { useTranslations } from 'next-intl'
 import { useNoteCollection } from '~/atoms/collections/note'
 import { usePostCollection } from '~/atoms/collections/post'
 import { AnimateChangeInHeight } from '~/components/ui/AnimateChangeInHeight'
+import { useLocaleFromContext } from '~/provider/locale-context'
 import { apiClient } from '~/utils/client'
 
 export const XLogSummary: FC<{
   cid: string
   className?: string
 }> = (props) => {
+  const t = useTranslations('xLog')
+  const locale = useLocaleFromContext()
   const { cid } = props
   const { data, isLoading, error } = SWR(
-    [`getSummary`, cid],
+    cid ? [`getSummary`, cid, locale] : null,
     async ([, cid]) => {
       return apiClient.proxy.fn.xlog.get_summary.get<{
         summary: string
       }>({
         params: {
           cid,
-          lang: 'zh',
+          lang: locale,
         },
       })
     },
@@ -42,20 +46,20 @@ export const XLogSummary: FC<{
     >
       <div className="flex items-center font-light">
         <OpenAIIcon className="mr-2 text-lg" />
-        AI 生成的摘要
+        {t('summaryTitle')}
       </div>
 
       <AnimateChangeInHeight duration={0.3}>
         <p className="text-gray-1 text-sm leading-loose">
-          {isLoading ? '加载中...' : error ? '请求错误' : data?.summary}
+          {isLoading ? t('loading') : error ? t('requestError') : data?.summary}
         </p>
         {isLoading && (
           <p className="text-gray-2 text-right text-sm">
-            (此服务由{' '}
-            <a href="https://xlog.app" target="_blank">
+            ({t('poweredBy')}{' '}
+            <a href="https://xlog.app" target="_blank" rel="noreferrer">
               xLog
             </a>{' '}
-            驱动)
+            {t('driven')})
           </p>
         )}
       </AnimateChangeInHeight>
@@ -63,24 +67,100 @@ export const XLogSummary: FC<{
   )
 }
 
+export const AISummary: FC<{
+  articleId: string
+  className?: string
+  fallback?: ReactNode
+  /** Pass when parent has locale (e.g. page) to avoid timing/hydration mismatch with backend x-lang. */
+  locale?: string
+}> = ({ articleId, className, fallback, locale: localeProp }) => {
+  const t = useTranslations('xLog')
+  const localeFromContext = useLocaleFromContext()
+  const locale = localeProp ?? localeFromContext
+  // Key must include locale so cache is per-language and refetches when locale changes.
+  const { data, isLoading } = SWR(
+    articleId ? [`getAiSummary`, articleId, locale] : null,
+    async ([, currentArticleId]) =>
+      apiClient.ai.getSummary({ articleId: currentArticleId, lang: locale }),
+    {
+      revalidateOnFocus: false,
+      errorRetryCount: 1,
+      errorRetryInterval: 1000,
+      refreshInterval: 0,
+    },
+  )
+
+  if (!articleId) {
+    return <>{fallback ?? null}</>
+  }
+
+  const summary = data?.summary?.trim()
+  if (summary) {
+    return (
+      <div
+        className={`border-gray-6 mt-4 space-y-2 rounded-xl border p-4 ${
+          className || ''
+        }`}
+      >
+        <div className="flex items-center font-light">
+          <OpenAIIcon className="mr-2 text-lg" />
+          {t('summaryTitle')}
+        </div>
+        <AnimateChangeInHeight duration={0.3}>
+          <p className="text-gray-1 text-sm leading-loose">{summary}</p>
+        </AnimateChangeInHeight>
+      </div>
+    )
+  }
+
+  if (isLoading) {
+    return (
+      <div
+        className={`border-gray-6 mt-4 space-y-2 rounded-xl border p-4 ${
+          className || ''
+        }`}
+      >
+        <div className="flex items-center font-light">
+          <OpenAIIcon className="mr-2 text-lg" />
+          {t('summaryTitle')}
+        </div>
+        <AnimateChangeInHeight duration={0.3}>
+          <p className="text-gray-1 text-sm leading-loose">{t('loading')}</p>
+        </AnimateChangeInHeight>
+      </div>
+    )
+  }
+
+  return <>{fallback ?? null}</>
+}
+
 export const XLogSummaryForPost: FC<{
   id: string
-}> = ({ id }) => {
+  locale?: string
+}> = ({ id, locale }) => {
   const cid = usePostCollection((state) => state.data.get(id)?.meta?.xLog?.cid)
-
-  if (!cid) return null
-
-  return <XLogSummary cid={cid} className="mb-4" />
+  return (
+    <AISummary
+      articleId={id}
+      className="mb-4"
+      fallback={cid ? <XLogSummary cid={cid} className="mb-4" /> : null}
+      locale={locale}
+    />
+  )
 }
 
 export const XLogSummaryForNote: FC<{
   id: string
-}> = ({ id }) => {
+  locale?: string
+}> = ({ id, locale }) => {
   const cid = useNoteCollection((state) => state.data.get(id)?.meta?.xLog?.cid)
-
-  if (!cid) return null
-
-  return <XLogSummary cid={cid} />
+  return (
+    <AISummary
+      articleId={id}
+      fallback={cid ? <XLogSummary cid={cid} /> : null}
+      locale={locale}
+    />
+  )
 }
 
 export function OpenAIIcon(props: SVGProps<SVGSVGElement>) {

@@ -1,6 +1,6 @@
 import { clsx } from 'clsx'
 import { motion } from 'framer-motion'
-import Link from 'next/link'
+import { Link } from '~/i18n/navigation'
 import type { FC } from 'react'
 import React, {
   memo,
@@ -9,6 +9,7 @@ import React, {
   useEffect,
   useState,
 } from 'react'
+import { flip, offset, shift } from '@floating-ui/react-dom'
 import { Modifier, ShortcutContext } from 'react-shortcut-guide'
 
 import { FloatPopover } from '~/components/ui/FloatPopover'
@@ -59,6 +60,11 @@ const MenuLink: FC<{ menu: Menu; isPublicUrl: boolean; index: number }> = (
       headless
       placement="bottom"
       offset={0}
+      middleware={[
+        flip({ padding: 20 }),
+        offset(0),
+        shift({ crossAxis: false }),
+      ]}
       popoverWrapperClassNames="z-19 relative"
       triggerComponent={() => (
         <Link

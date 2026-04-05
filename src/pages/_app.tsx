@@ -3,9 +3,13 @@ import 'assets/styles/main.css'
 
 import type { AppContext } from 'next/app'
 import NextApp from 'next/app'
+import { NextIntlClientProvider } from 'next-intl'
 import { useRouter } from 'next/router'
 import type { FC } from 'react'
-import React, { useEffect, useMemo } from 'react'
+import React, { startTransition, useEffect, useMemo } from 'react'
+
+import { defaultLocale, type Locale } from '~/i18n/config'
+import { getLocaleFromContext } from '~/i18n/navigation'
 
 import { ProviderComposer } from '~/components/app/Composer'
 import { NoDataErrorView } from '~/components/app/Error/no-data'
@@ -14,7 +18,10 @@ import { DebugLayout } from '~/components/layouts/DebugLayout'
 import { SiteLayout } from '~/components/layouts/SiteLayout'
 import type { InitialDataType } from '~/provider/initial-data'
 import { InitialContextProvider } from '~/provider/initial-data'
+import { LangSyncProvider } from '~/provider/lang-sync'
+import { LocaleProvider } from '~/provider/locale-context'
 import { SWRProvider } from '~/provider/swr'
+import { setRequestLocale } from '~/utils/client'
 import { attachRequestProxy, fetchInitialData } from '~/utils/app'
 import { isDev } from '~/utils/env'
 
@@ -31,11 +38,13 @@ import { printToConsole } from '~/utils/console'
 
 interface DataModel {
   initData: InitialDataType
+  locale?: Locale
+  messages?: Record<string, unknown>
 }
 
 const PageProviders = [
   <SWRProvider key="SWRProvider" />,
-
+  <LangSyncProvider key="LangSyncProvider" />,
   <AppLayout key="appLayout" />,
   <SiteLayout key="BasicLayout" />,
 ]
@@ -46,27 +55,27 @@ const Prepare = () => {
   const initialData: AggregateRoot | null = useInitialData()
 
   useEffect(() => {
-    try {
-      const { user } = initialData
-      checkLogin()
-      // set user
-      useUserStore.getState().setUser(user)
-      import('../socket').then(({ socketClient }) => {
-        socketClient.initIO()
-      })
-    } finally {
-      document.body.classList.remove('loading')
-    }
-
-    checkBrowser()
-    printToConsole()
+    startTransition(() => {
+      try {
+        const { user } = initialData
+        checkLogin()
+        useUserStore.getState().setUser(user)
+        import('../socket').then(({ socketClient }) => {
+          socketClient.initIO()
+        })
+      } finally {
+        document.body.classList.remove('loading')
+      }
+      checkBrowser()
+      printToConsole()
+    })
   }, [])
   return null
 }
 const App: FC<DataModel & { Component: any; pageProps: any; err: any }> = (
   props,
 ) => {
-  const { initData, Component, pageProps } = props
+  const { initData, Component, pageProps, locale = defaultLocale, messages = {} } = props
 
   const router = useRouter()
 
@@ -96,10 +105,14 @@ const App: FC<DataModel & { Component: any; pageProps: any; err: any }> = (
     )
   }
   return (
-    <ProviderComposer contexts={AppProviders}>
-      <Prepare />
-      {Inner}
-    </ProviderComposer>
+    <NextIntlClientProvider locale={locale} messages={messages}>
+      <LocaleProvider initialLocale={locale}>
+        <ProviderComposer contexts={AppProviders}>
+          <Prepare />
+          {Inner}
+        </ProviderComposer>
+      </LocaleProvider>
+    </NextIntlClientProvider>
   )
 }
 // @ts-ignore
@@ -109,7 +122,14 @@ App.getInitialProps = async (props: AppContext) => {
 
   attachRequestProxy(request)
 
+  const locale = getLocaleFromContext(ctx)
+  setRequestLocale(locale)
   const data: InitialDataType & { reason?: any } = await fetchInitialData()
+
+  const messages = (
+    await import(`../messages/${locale}.json`)
+  ).default as Record<string, unknown>
+
   const appProps = await (async () => {
     try {
       // Next 会从小组件向上渲染整个页面，有可能在此报错。兜底
@@ -136,6 +156,8 @@ App.getInitialProps = async (props: AppContext) => {
   return {
     ...appProps,
     initData: data,
+    locale,
+    messages,
   }
 }
 

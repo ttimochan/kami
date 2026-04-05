@@ -3,12 +3,17 @@ import { CanceledError } from 'axios'
 import { message } from 'react-message-popup'
 
 import { allControllers, createClient } from '@mx-space/api-client'
-import { axiosAdaptor } from '@mx-space/api-client/dist/adaptors/axios'
-
-import { API_URL } from '~/constants/env'
-
 import { getToken } from './cookie'
 import { isClientSide } from './env'
+import { API_URL } from '~/constants/env'
+
+// Importing this way as subpath has no type declarations
+// @ts-expect-error: no type declarations for this subpath
+import * as axiosAdaptorImport from '@mx-space/api-client/dist/adaptors/axios'
+const axiosAdaptor = axiosAdaptorImport.axiosAdaptor as typeof axiosAdaptorImport.axiosAdaptor & {
+  default: AxiosInstance
+}
+
 
 const genUUID = () => {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
@@ -18,7 +23,7 @@ const genUUID = () => {
   })
 }
 
-export const apiClient = createClient(axiosAdaptor)(API_URL, {
+export const apiClient = createClient(axiosAdaptor as any)(API_URL, {
   controllers: allControllers,
 })
 
@@ -28,13 +33,26 @@ export const $axios = axiosAdaptor.default as AxiosInstance
 
 $axios.defaults.timeout = 10000
 
+/** Current locale for API requests (set by LangSyncProvider). Backend can use x-lang for localized content. */
+let requestLocale: string | null = null
+
+export function setRequestLocale(locale: string | null) {
+  requestLocale = locale
+}
+
+export function getRequestLocale() {
+  return requestLocale
+}
+
 $axios.interceptors.request.use((config) => {
+  config.headers = config.headers ?? {}
   const token = getToken()
-  if (config.headers) {
-    if (token) {
-      config.headers['Authorization'] = token
-    }
-    config.headers['x-uuid'] = uuid
+  if (token) {
+    config.headers['Authorization'] = token
+  }
+  config.headers['x-uuid'] = uuid
+  if (requestLocale) {
+    config.headers['x-lang'] = requestLocale
   }
 
   return config
@@ -76,8 +94,8 @@ $axios.interceptors.response.use(
           typeof data.message == 'string'
             ? data.message
             : Array.isArray(data.message)
-            ? data.message[0]
-            : '请求错误',
+              ? data.message[0]
+              : '请求错误',
         )
       }
     }

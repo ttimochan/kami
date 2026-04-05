@@ -7,6 +7,7 @@ import React, {
   useRef,
   useState,
 } from 'react'
+import { useTranslations } from 'next-intl'
 import type { ShortcutOptions } from 'react-shortcut-guide'
 import { ShortcutProvider } from 'react-shortcut-guide'
 
@@ -66,7 +67,7 @@ const useColorModeTransition = (isDark: boolean) => {
 
     return () => {
       remove()
-      timer && clearTimeout(timer)
+      if (timer) clearTimeout(timer)
     }
   }, [isDark])
 }
@@ -79,9 +80,10 @@ export const SiteLayout: FC = memo(({ children }) => {
   const isMobile = useAppStore((state) => state.viewport.mobile)
   const colorMode = useAppStore((state) => state.colorMode)
 
+  const t = useTranslations('common')
   const [showNotice, setNotice] = useState(false)
   const [tip, setTip] = useState({
-    text: '白天模式',
+    text: t('lightMode'),
     icon: <PhSunBold />,
   })
 
@@ -90,12 +92,12 @@ export const SiteLayout: FC = memo(({ children }) => {
 
     // 去相反的值去比较，因为 toggle 之后因为 react 的 batch 不会立刻更新
     setTip({
-      text: !isDark ? '夜间模式' : '白天模式',
+      text: !isDark ? t('darkMode') : t('lightMode'),
       icon: !isDark ? <BiMoonStarsFill /> : <PhSunBold />,
     })
 
     setNotice(true)
-  }, [isDark, toggle])
+  }, [isDark, toggle, t])
   const actionId = useId()
   useEffect(() => {
     const actionStore = useActionStore.getState()
@@ -123,7 +125,7 @@ export const SiteLayout: FC = memo(({ children }) => {
       setTimeout(() => {
         const $el = document.getElementById(decodeURIComponent(id))
 
-        $el && springScrollToElement($el, -window.innerHeight / 2 + 100)
+        if ($el) springScrollToElement($el, -window.innerHeight / 2 + 100)
       }, 1050)
     }
   }, [])

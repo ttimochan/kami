@@ -1,6 +1,7 @@
-import Link from 'next/link'
+import { Link } from '~/i18n/navigation'
 import type { FC } from 'react'
 import React, { Fragment, useCallback } from 'react'
+import { useTranslations } from 'next-intl'
 
 import Package from '~/../package.json'
 import { useAppStore } from '~/atoms/app'
@@ -27,11 +28,13 @@ const FooterContainer = (props) => {
 }
 
 export const FooterContent: FC = () => {
+  const t = useTranslations('common')
   const thisYear = new Date().getFullYear()
   const initialData = useInitialData()
   const name = initialData.user.name
   const kamiConfig = useThemeConfig()
   const motto = kamiConfig.site.footer.motto
+  const gatewayOnline = useAppStore((state) => state.gatewayOnline)
 
   const icp = kamiConfig.site.footer.icp
   const navigation = kamiConfig.site.footer.navigation
@@ -40,9 +43,9 @@ export const FooterContent: FC = () => {
   const trackerToGithub = useCallback(() => {
     event({
       action: TrackerAction.Click,
-      label: '底部点击去 Github',
+      label: t('trackGithubClick'),
     })
-  }, [])
+  }, [event, t])
 
   return (
     <div className={styles.wrap}>
@@ -50,7 +53,7 @@ export const FooterContent: FC = () => {
         <p>
           © {thisYear !== 2020 && '2020-'}
           {thisYear}{' '}
-          <a href={kamiConfig.site.footer.homePage ?? '#'} target="_blank">
+          <a href={kamiConfig.site.footer.homePage ?? '#'} target="_blank" rel="noreferrer">
             {name}
           </a>
           .{' '}
@@ -58,7 +61,7 @@ export const FooterContent: FC = () => {
             {motto.content}
           </span>
         </p>
-        <ImpressionView trackerMessage="底部曝光">
+        <ImpressionView trackerMessage={t('trackFooterExposure')}>
           <p className="children:flex-shrink-0 flex flex-wrap justify-center space-x-2">
             <span>Powered by </span>
             <a href="https://github.com/mx-space" onClick={trackerToGithub}>
@@ -86,10 +89,11 @@ export const FooterContent: FC = () => {
       <div className="right to-center">
         <p className="phone:mr-0 mr-12">
           {navigation.map((nav, i) => {
+            const href = nav.path === '/notes' ? '/notes/latest' : nav.path
             return (
               <Fragment key={nav.name}>
                 <Link
-                  href={nav.path}
+                  href={href}
                   target={nav.newtab ? '_blank' : undefined}
                 >
                   {nav.name}
@@ -101,17 +105,13 @@ export const FooterContent: FC = () => {
         </p>
 
         <p className="phone:mr-0 mr-12">
-          <GatewayCount /> 个小伙伴正在浏览
+          {t('browsingCount', { count: gatewayOnline ?? 1 })}
         </p>
       </div>
     </div>
   )
 }
 
-const GatewayCount = () => {
-  const gatewayCount = useAppStore((state) => state.gatewayOnline)
-  return <>{gatewayCount || 1}</>
-}
 export const Footer = withNoSSR(() => {
   return (
     <FooterContainer>

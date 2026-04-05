@@ -1,4 +1,4 @@
-import clsx from 'clsx'
+import { clsx } from 'clsx'
 import dayjs from 'dayjs'
 import { motion, useAnimationControls } from 'framer-motion'
 import type { ReactNode } from 'react'
@@ -89,7 +89,9 @@ export const NoteLayout = forwardRef<HTMLElement, NoteLayoutProps>(
     const url = useAppStore((state) => state.appUrl)
 
     const bookmark = useNoteCollection((state) => state.get(id)?.bookmark)
-    const isHide = useNoteCollection((state) => state.get(id)?.hide)
+    const isHide = useNoteCollection(
+      (state) => (state.get(id) as { hide?: boolean } | undefined)?.hide,
+    )
     const banner = useNoteMetaBanner(id)
     const onMarkToggle = useCallback(async () => {
       await useNoteCollection.getState().bookmark(id)
@@ -209,7 +211,7 @@ export const NoteLayout = forwardRef<HTMLElement, NoteLayoutProps>(
                     data-hide-print
                     className="edit-link"
                     target="_blank"
-                    href={resolveUrl(`#/notes/edit?id=${id}`, url.adminUrl)!}
+                    href={resolveUrl(`#/notes/edit?id=${id}`, url.adminUrl)!} rel="noreferrer"
                   >
                     编辑
                   </a>

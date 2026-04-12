@@ -77,7 +77,7 @@ export const PostBlock: FC<PostBlockProps> = (props) => {
   const pinEl = (
     <div
       className={clsx(
-        'absolute bottom-0 right-0 top-0 hidden h-5 w-5 items-center overflow-hidden',
+        'absolute inset-y-0 right-0 hidden size-5 items-center overflow-hidden',
         isLogged && '!inline-flex cursor-pointer',
         !isLogged && pinState && 'pointer-events-none',
         pinState && 'text-red !inline-flex',
@@ -85,7 +85,7 @@ export const PostBlock: FC<PostBlockProps> = (props) => {
       role="button"
       onClick={handlePin}
     >
-      <i className="absolute h-full w-full">
+      <i className="absolute size-full">
         <IconTransition
           currentState={pinState ? 'solid' : 'regular'}
           regularIcon={<PhPushPin />}
@@ -139,7 +139,7 @@ export const PostBlock: FC<PostBlockProps> = (props) => {
 
           <p>
             {useMemo(() => {
-              const r = removeMd(text)
+              const r = removeMd(text || '')
               return r.length >= 250 ? `${r.slice(0, 250)}..` : r
             }, [text])}
           </p>
@@ -156,7 +156,7 @@ export const PostBlock: FC<PostBlockProps> = (props) => {
             }}
           >
             {t('readMore')}{' '}
-            <IcRoundKeyboardDoubleArrowRight className="text-lg transition transition-all" />
+            <IcRoundKeyboardDoubleArrowRight className="text-lg transition-all" />
           </Link>
         </div>
       </div>

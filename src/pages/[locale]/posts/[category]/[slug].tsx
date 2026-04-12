@@ -47,6 +47,7 @@ import { useBackgroundOpacity } from '~/hooks/app/use-kami-theme'
 import { useIsClient } from '~/hooks/common/use-is-client'
 import { getLocaleFromContext, Link, useRouter } from '~/i18n/navigation'
 import { useLocaleFromContext } from '~/provider/locale-context'
+import type { WithMeta } from '~/types/api-client'
 import { apiClient } from '~/utils/client'
 import { isEqualObject } from '~/utils/_'
 import { isLikedBefore, setLikeId } from '~/utils/cookie'
@@ -61,9 +62,11 @@ const CommentLazy = lazy(() =>
   })),
 )
 
-const useUpdatePost = (post: ModelWithDeleted<PostModel>) => {
+type PostModelWithMeta = WithMeta<PostModel>
+
+const useUpdatePost = (post: ModelWithDeleted<PostModelWithMeta>) => {
   const t = useTranslations('post')
-  const beforeModel = useRef<PostModel>()
+  const beforeModel = useRef<PostModelWithMeta>()
   const router = useRouter()
 
   useEffect(() => {
@@ -138,7 +141,7 @@ const Seo$: FC<{ id: string }> = ({ id }) => {
       'meta',
     ]),
   )
-  const description = summary ?? getSummaryFromMd(text).slice(0, 150)
+  const description = summary ?? getSummaryFromMd(text || '').slice(0, 150)
   return (
     <Seo
       title={title}
@@ -163,7 +166,7 @@ const FooterActionBar: FC<{ id: string }> = ({ id }) => {
   const [actions, setActions] = useState<ActionProps>({})
 
   const post = usePostCollection(
-    (state) => state.data.get(id) || (noop as PostModel),
+    (state) => state.data.get(id) || (noop as PostModelWithMeta),
   )
 
   const themeConfig = useThemeConfig()
@@ -329,7 +332,7 @@ export const PostView: FC<IdProps & { locale?: string }> = (props) => {
         <ImageSizeMetaContext.Provider value={imagesMap}>
           <article>
             <h1 className="sr-only">{post.title}</h1>
-            <KamiMarkdown codeBlockFully value={post.text} toc />
+            <KamiMarkdown codeBlockFully value={post.text || ''} toc />
           </article>
         </ImageSizeMetaContext.Provider>
 
@@ -361,7 +364,7 @@ export const PostView: FC<IdProps & { locale?: string }> = (props) => {
   )
 }
 
-const NextPostView: NextPage<PostModel> = (props) => {
+const NextPostView: NextPage<PostModelWithMeta> = (props) => {
   const { id } = props
   const router = useRouter()
   const locale = useLocaleFromContext()

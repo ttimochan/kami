@@ -90,8 +90,8 @@ const SingleComment: FC<{ id: string }> = ({ id, children }) => {
   )
 
   const { commentIdMap, comments } = useCommentCollection<{
-    commentIdMap: Map<Id, CommentModel>
-    comments: CommentModel[]
+    commentIdMap: Map<Id, CommentModelWithHighlight>
+    comments: CommentModelWithHighlight[]
   }>(
     (state) => ({
       commentIdMap: state.data,
@@ -232,15 +232,14 @@ const SingleComment: FC<{ id: string }> = ({ id, children }) => {
       }
       content={
         <KamiMarkdown
-          value={`${
-            comment.parent
-              ? `@${
-                  commentIdMap.get(comment.parent as any as string)?.id ??
-                  (comment.parent as any as CommentModel)?.id ??
-                  ''
-                } `
+          value={`${(() => {
+            const parentRaw = comment.parent
+            const parentId =
+              typeof parentRaw === 'string' ? parentRaw : parentRaw?.id
+            return parentId
+              ? `@${commentIdMap.get(parentId)?.author ?? ''} `
               : ''
-          }${comment.text}`}
+          })()}${comment.text}`}
           forceBlock
           className={styles['comment']}
           disableParsingRawHTML
@@ -289,7 +288,7 @@ const SingleComment: FC<{ id: string }> = ({ id, children }) => {
         />
       }
       datetime={comment.created}
-      commentKey={comment.key}
+      commentKey={comment.id}
       actions={actionsEl}
     >
       {replyId === comment.id && (

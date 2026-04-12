@@ -3,11 +3,11 @@ import { CanceledError } from 'axios'
 import { message } from 'react-message-popup'
 
 import { allControllers, createClient } from '@mx-space/api-client'
-import { getToken } from './cookie'
+import { getAuthorizationToken } from './cookie'
 import { isClientSide } from './env'
 import { API_URL } from '~/constants/env'
 
-// Importing this way as subpath has no type declarations
+// Importing this way as subpath has no type declarations under current moduleResolution.
 // @ts-expect-error: no type declarations for this subpath
 import * as axiosAdaptorImport from '@mx-space/api-client/dist/adaptors/axios'
 const axiosAdaptor = axiosAdaptorImport.axiosAdaptor as typeof axiosAdaptorImport.axiosAdaptor & {
@@ -46,13 +46,15 @@ export function getRequestLocale() {
 
 $axios.interceptors.request.use((config) => {
   config.headers = config.headers ?? {}
-  const token = getToken()
+  const token = getAuthorizationToken()
   if (token) {
     config.headers['Authorization'] = token
   }
   config.headers['x-uuid'] = uuid
   if (requestLocale) {
     config.headers['x-lang'] = requestLocale
+  } else if ('x-lang' in config.headers) {
+    delete config.headers['x-lang']
   }
 
   return config

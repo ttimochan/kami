@@ -1,6 +1,5 @@
 import { clsx } from 'clsx'
 import { motion } from 'framer-motion'
-import throttle from 'lodash-es/throttle'
 import { Link } from '~/i18n/navigation'
 import type { FC, KeyboardEventHandler } from 'react'
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
@@ -46,14 +45,11 @@ export const SearchPanel: FC<SearchPanelProps> = (props) => {
         return
       }
       return $axios
-        .get<Awaited<ReturnType<typeof apiClient.search.searchByAlgolia>>>(
-          apiClient.search.proxy('algolia').toString(true),
-          {
-            params: {
-              keyword,
-            },
+        .get(apiClient.search.proxy('algolia').toString(true), {
+          params: {
+            keyword,
           },
-        )
+        })
         .then((data) => data.data)
     },
     {
@@ -195,7 +191,7 @@ export const SearchPanel: FC<SearchPanelProps> = (props) => {
       <div
         className={clsx(styles['status-bar'], loading && styles['loading'])}
       />
-      <div className="overflow-overlay relative flex-shrink flex-grow">
+      <div className="overflow-overlay relative shrink grow">
         <ul className="h-full px-3 py-4" ref={listRef}>
           {list.length === 0 && !loading ? (
             <div className="flex h-full items-center justify-center">
@@ -213,9 +209,7 @@ export const SearchPanel: FC<SearchPanelProps> = (props) => {
               return (
                 <li
                   key={item.id}
-                  onMouseOver={throttle(() => {
-                    setCurrentSelect(index)
-                  }, 40)}
+                  onMouseOver={() => setCurrentSelect(index)}
                 >
                   <Link
                     href={item.url}
@@ -224,10 +218,10 @@ export const SearchPanel: FC<SearchPanelProps> = (props) => {
                       index === currentSelect && styles['active'],
                     )}
                   >
-                    <span className="block flex-1 flex-shrink-0 truncate">
+                    <span className="block flex-1 shrink-0 truncate">
                       {item.title}
                     </span>
-                    <span className="text-deepgray text-theme-gray-2 block flex-shrink-0 flex-grow-0">
+                    <span className="text-deepgray text-theme-gray-2 block shrink-0 grow-0">
                       {item.subtitle}
                     </span>
                   </Link>

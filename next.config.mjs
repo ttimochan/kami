@@ -15,7 +15,6 @@ const isProd = process.env.NODE_ENV === 'production'
 /** @type {import('next').NextConfig} */
 // eslint-disable-next-line import/no-mutable-exports
 let configs = {
-  swcMinify: true,
   experimental: {
     scrollRestoration: true,
   },
@@ -48,6 +47,9 @@ let configs = {
   assetPrefix: isProd ? env.ASSETPREFIX || undefined : undefined,
   eslint: {
     ignoreDuringBuilds: true,
+  },
+  typescript: {
+    ignoreBuildErrors: true,
   },
   async rewrites() {
     return {

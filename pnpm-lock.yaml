@@ -20,7 +20,7 @@ importers:
         version: 2.0.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@formkit/auto-animate':
         specifier: 1.0.0-pre-alpha.3
-        version: 1.0.0-pre-alpha.3(react@18.2.0)
+        version: 1.0.0-pre-alpha.3(react@19.2.5)
       '@mx-space/api-client':
         specifier: 3.1.0
         version: 3.1.0
@@ -5520,9 +5520,9 @@ snapshots:
     dependencies:
       '@formatjs/fast-memoize': 3.1.1
 
-  '@formkit/auto-animate@1.0.0-pre-alpha.3(react@18.2.0)':
+  '@formkit/auto-animate@1.0.0-pre-alpha.3(react@19.2.5)':
     optionalDependencies:
-      react: 18.2.0
+      react: 19.2.5
 
   '@humanfs/core@0.19.1': {}
 
@@ -7804,7 +7804,7 @@ snapshots:
     dependencies:
       debug: 3.2.7
     optionalDependencies:
-      '@typescript-eslint/parser': 8.58.1(eslint@9.39.4(jiti@1.21.7))(typescript@5.2.2)
+      '@typescript-eslint/parser': 8.58.1(eslint@8.57.1)(typescript@5.2.2)
       eslint: 8.57.1
       eslint-import-resolver-node: 0.3.10
     transitivePeerDependencies:
@@ -7833,7 +7833,7 @@ snapshots:
       string.prototype.trimend: 1.0.9
       tsconfig-paths: 3.15.0
     optionalDependencies:
-      '@typescript-eslint/parser': 8.58.1(eslint@9.39.4(jiti@1.21.7))(typescript@5.2.2)
+      '@typescript-eslint/parser': 8.58.1(eslint@8.57.1)(typescript@5.2.2)
     transitivePeerDependencies:
       - eslint-import-resolver-typescript
       - eslint-import-resolver-webpack
@@ -7875,7 +7875,7 @@ snapshots:
     dependencies:
       eslint: 8.57.1
     optionalDependencies:
-      '@typescript-eslint/eslint-plugin': 8.58.1(@typescript-eslint/parser@8.58.1(eslint@8.57.1)(typescript@5.2.2))(eslint@9.39.4(jiti@1.21.7))(typescript@5.2.2)
+      '@typescript-eslint/eslint-plugin': 8.58.1(@typescript-eslint/parser@8.58.1(eslint@8.57.1)(typescript@5.2.2))(eslint@8.57.1)(typescript@5.2.2)
 
   eslint-scope@5.1.1:
     dependencies:

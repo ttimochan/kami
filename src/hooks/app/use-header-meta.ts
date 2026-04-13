@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
-import { create } from 'zustand'
+import { createWithEqualityFn } from 'zustand/traditional'
 
-const useHeaderMetaStore = create<{
+const useHeaderMetaStore = createWithEqualityFn<{
   title: string
   meta: string
   show: boolean
@@ -24,7 +24,7 @@ export const useSetHeaderMeta = (title: string, description: string) => {
       meta: description,
       show: true,
     })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [description, title])
 
   useEffect(() => {
@@ -34,14 +34,14 @@ export const useSetHeaderMeta = (title: string, description: string) => {
         show: false,
       }))
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [])
 }
 export const useGetHeaderMeta = () => {
   return useHeaderMetaStore()
 }
 
-const useShareDataStore = create<{
+const useShareDataStore = createWithEqualityFn<{
   title: string
   text?: string
   url: string
@@ -62,7 +62,7 @@ export const useSetHeaderShare = (title: string, text?: string) => {
       title,
       url: location.href,
     })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
   }, [title, text])
 
   useEffect(() => {

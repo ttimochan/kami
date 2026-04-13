@@ -1,7 +1,7 @@
 import { clsx } from 'clsx'
 import type { MarkdownToJSX } from 'markdown-to-jsx'
 import { sanitizeUrl } from 'markdown-to-jsx'
-import type { FC } from 'react'
+import type { FC, PropsWithChildren } from 'react'
 import {
   Fragment,
   createElement,
@@ -67,7 +67,10 @@ const CommentList: FC = memo(() => {
   )
 })
 
-const SingleComment: FC<{ id: string }> = ({ id, children }) => {
+const SingleComment: FC<PropsWithChildren<{ id: string }>> = ({
+  id,
+  children,
+}) => {
   const t = useTranslations('comment')
   const tCommon = useTranslations('common')
   const [replyId, setReplyId] = useState('')
@@ -108,15 +111,21 @@ const SingleComment: FC<{ id: string }> = ({ id, children }) => {
 
   const handleReply = useCallback(
     async (model) => {
-      const { success, error } = await openCommentMessage()
+      const { success, error } = await openCommentMessage({
+        sending: t('sending'),
+        success: t('success'),
+        failed: t('failed'),
+      })
       try {
         let data: CommentModel
         if (logged) {
-          data = await apiClient.comment.proxy.master
-            .reply(comment.id)
-            .post({ data: model })
+          data = await apiClient.comment.proxy.reader.reply(comment.id).post({
+            data: model,
+          })
         } else {
-          data = await apiClient.comment.reply(comment.id, model)
+          data = await apiClient.comment.proxy.guest.reply(comment.id).post({
+            data: model,
+          })
         }
         success()
 
@@ -129,7 +138,7 @@ const SingleComment: FC<{ id: string }> = ({ id, children }) => {
         console.error(err)
       }
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+     
     [comment.id, logged],
   )
   const handleDelete = useCallback(

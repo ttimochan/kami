@@ -1,4 +1,4 @@
-import { create } from 'zustand'
+import { createWithEqualityFn } from 'zustand/traditional'
 
 import type { UserModel } from '@mx-space/api-client'
 
@@ -6,32 +6,30 @@ import { useAppStore } from './app'
 
 interface UserState {
   master: Partial<UserModel> | null
-  token: string | null
   isLogged: boolean
 }
 
 interface UserAction {
   setUser(model: UserModel): void
-  setToken(token?: string): void
+  setLoggedIn(isLogged: boolean): void
 }
 
 const userDefault: UserState = {
   master: null,
-  token: null,
   isLogged: false,
 }
 
-export const useUserStore = create<UserState & UserAction>(
-  (setState, _getState) => {
+export const useUserStore = createWithEqualityFn<UserState & UserAction>(
+  (setState) => {
     return {
       ...userDefault,
 
-      setToken(token) {
-        if (!token) {
-          setState({ token: null, isLogged: false })
+      setLoggedIn(isLogged) {
+        if (!isLogged) {
+          setState({ isLogged: false })
           return
         }
-        setState({ token, isLogged: true })
+        setState({ isLogged: true })
 
         requestAnimationFrame(() => {
           useAppStore.getState().fetchUrl()

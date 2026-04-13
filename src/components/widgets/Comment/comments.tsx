@@ -53,6 +53,18 @@ export const Comments: FC<{ allowComment: boolean }> = memo(
 const CommentList: FC = memo(() => {
   const comments = useCommentCollection((state) => state.comments)
 
+  const rootOrdinalById = useMemo(() => {
+    const sorted = [...comments].sort(
+      (a, b) =>
+        new Date(a.created).getTime() - new Date(b.created).getTime(),
+    )
+    const m = new Map<string, number>()
+    sorted.forEach((c, i) => {
+      m.set(c.id, i + 1)
+    })
+    return m
+  }, [comments])
+
   return (
     <BottomToUpTransitionView
       appear
@@ -60,17 +72,22 @@ const CommentList: FC = memo(() => {
     >
       <div id="comments-wrap">
         {comments.map((comment) => {
-          return <InnerCommentList id={comment.id} key={comment.id} />
+          const ord = rootOrdinalById.get(comment.id) ?? 1
+          return (
+            <InnerCommentList
+              id={comment.id}
+              key={comment.id}
+              threadKey={`#${ord}`}
+            />
+          )
         })}
       </div>
     </BottomToUpTransitionView>
   )
 })
 
-const SingleComment: FC<PropsWithChildren<{ id: string }>> = ({
-  id,
-  children,
-}) => {
+const SingleComment: FC<PropsWithChildren<{ id: string; threadKey: string }>> =
+  ({ id, threadKey, children }) => {
   const t = useTranslations('comment')
   const tCommon = useTranslations('common')
   const [replyId, setReplyId] = useState('')
@@ -297,7 +314,7 @@ const SingleComment: FC<PropsWithChildren<{ id: string }>> = ({
         />
       }
       datetime={comment.created}
-      commentKey={comment.id}
+      commentKey={threadKey}
       actions={actionsEl}
     >
       {replyId === comment.id && (
@@ -341,20 +358,34 @@ const SingleComment: FC<PropsWithChildren<{ id: string }>> = ({
     </Comment>
   )
 }
-const InnerCommentList = memo<{ id: string }>(({ id }) => {
-  const comment = useCommentCollection((state) => state.data.get(id))
+const InnerCommentList = memo<{ id: string; threadKey: string }>(
+  ({ id, threadKey }) => {
+    const comment = useCommentCollection((state) => state.data.get(id))
 
-  if (!comment) {
-    return null
-  }
-  if (comment.children?.length > 0) {
-    const children = comment.children
+    if (!comment) {
+      return null
+    }
+    if (comment.children?.length > 0) {
+      const children = comment.children
 
-    const childComments = children.map((child: CommentModel) => {
-      return <InnerCommentList id={child.id} key={child.id} />
-    })
+      const childComments = children.map(
+        (child: CommentModel, index: number) => {
+          return (
+            <InnerCommentList
+              id={child.id}
+              key={child.id}
+              threadKey={`${threadKey}#${index + 1}`}
+            />
+          )
+        },
+      )
 
-    return <SingleComment id={comment.id}>{childComments}</SingleComment>
-  }
-  return <SingleComment id={comment.id} />
-})
+      return (
+        <SingleComment id={comment.id} threadKey={threadKey}>
+          {childComments}
+        </SingleComment>
+      )
+    }
+    return <SingleComment id={comment.id} threadKey={threadKey} />
+  },
+)

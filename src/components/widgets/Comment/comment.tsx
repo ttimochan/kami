@@ -45,8 +45,12 @@ export const Comment: FC<
     ...rest
   } = props
   const { className, ...htmlProps } = rest
+  const keyArr = useMemo(
+    () => commentKey.split('#').slice(1).filter(Boolean),
+    [commentKey],
+  )
+  const threadDepth = Math.min(Math.max(keyArr.length, 1), 4)
   const key = useMemo(() => {
-    const keyArr = commentKey.split('#').slice(1)
     return `#${
       keyArr.length > 5
         ? `${keyArr.slice(0, 3).join('.')}...${keyArr
@@ -54,7 +58,7 @@ export const Comment: FC<
             .reduce((acc, cur) => acc + +cur, 0)}+${keyArr[keyArr.length - 1]}`
         : keyArr.join('.')
     }`
-  }, [commentKey])
+  }, [keyArr])
   const handleJump = useCallback(() => {
     if (!id) {
       return
@@ -64,7 +68,12 @@ export const Comment: FC<
     if ($el) springScrollToElement($el, -window.innerHeight / 2 + 50)
   }, [id])
   return (
-    <div className={clsx(styles['comment'], className)} id={id} {...htmlProps}>
+    <div
+      className={clsx(styles['comment'], className)}
+      data-thread-depth={threadDepth}
+      id={id}
+      {...htmlProps}
+    >
       <div className={clsx(highlight && styles['highlight'], styles['inner'])}>
         <div className={styles['comment-avatar']}>{avatar}</div>
         <div className={styles['content']}>

@@ -17,8 +17,15 @@
 
 .comment {
   font-size: 14px;
+  --thread-indent-step: 24px;
 
   @apply relative;
+}
+
+@media (max-width: 650px) {
+  .comment {
+    --thread-indent-step: 12px;
+  }
 }
 
 @media (max-width: 700px) {
@@ -151,18 +158,20 @@
     }
   }
 
-  .nested {
-    margin-left: 24px;
-
-    .nested {
-      margin-left: 0;
-    }
+  &[data-thread-depth='2'] {
+    margin-left: calc(var(--thread-indent-step) * 1);
   }
 
-  @media (max-width: 650px) {
-    .nested {
-      margin-left: 12px;
-    }
+  &[data-thread-depth='3'] {
+    margin-left: calc(var(--thread-indent-step) * 2);
+  }
+
+  &[data-thread-depth='4'] {
+    margin-left: calc(var(--thread-indent-step) * 3);
+  }
+
+  .nested {
+    margin-left: 0;
   }
 }
 

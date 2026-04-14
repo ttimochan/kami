@@ -26,7 +26,6 @@ import { KamiMarkdown } from '~/components/common/KamiMarkdown'
 import { PhPushPin, PhPushPinFill } from '~/components/ui/Icons/for-post'
 import { ImageTagPreview } from '~/components/ui/ImageTagPreview'
 import { BottomToUpTransitionView } from '~/components/ui/Transition/BottomToUpTransitionView'
-import { socketClient } from '~/socket'
 import { apiClient } from '~/utils/client'
 
 import { openCommentMessage } from '.'
@@ -38,56 +37,61 @@ import styles from './index.module.css'
 import { CommentAtRender } from './renderers/comment-at'
 
 type Id = string
-export const Comments: FC<{ allowComment: boolean }> = memo(
-  ({ allowComment }) => {
+export const Comments: FC<{
+  allowComment: boolean
+  onRefresh: () => Promise<unknown>
+}> = memo(({ allowComment, onRefresh }) => {
+  const comments = useCommentCollection((state) => state.comments)
+
+  if (comments.length === 0) {
+    return allowComment ? <Empty /> : null
+  }
+
+  return createElement(CommentList, { onRefresh })
+})
+
+const CommentList: FC<{ onRefresh: () => Promise<unknown> }> = memo(
+  ({ onRefresh }) => {
     const comments = useCommentCollection((state) => state.comments)
 
-    if (comments.length === 0) {
-      return allowComment ? <Empty /> : null
-    }
+    const rootOrdinalById = useMemo(() => {
+      const sorted = [...comments].sort(
+        (a, b) =>
+          new Date(a.created).getTime() - new Date(b.created).getTime(),
+      )
+      const m = new Map<string, number>()
+      sorted.forEach((c, i) => {
+        m.set(c.id, i + 1)
+      })
+      return m
+    }, [comments])
 
-    return createElement(CommentList)
+    return (
+      <BottomToUpTransitionView
+        appear
+        timeout={useRef({ appear: 300, enter: 500 }).current}
+      >
+        <div id="comments-wrap">
+          {comments.map((comment) => {
+            const ord = rootOrdinalById.get(comment.id) ?? 1
+            return (
+              <InnerCommentList
+                id={comment.id}
+                key={comment.id}
+                onRefresh={onRefresh}
+                threadKey={`#${ord}`}
+              />
+            )
+          })}
+        </div>
+      </BottomToUpTransitionView>
+    )
   },
 )
 
-const CommentList: FC = memo(() => {
-  const comments = useCommentCollection((state) => state.comments)
-
-  const rootOrdinalById = useMemo(() => {
-    const sorted = [...comments].sort(
-      (a, b) =>
-        new Date(a.created).getTime() - new Date(b.created).getTime(),
-    )
-    const m = new Map<string, number>()
-    sorted.forEach((c, i) => {
-      m.set(c.id, i + 1)
-    })
-    return m
-  }, [comments])
-
-  return (
-    <BottomToUpTransitionView
-      appear
-      timeout={useRef({ appear: 300, enter: 500 }).current}
-    >
-      <div id="comments-wrap">
-        {comments.map((comment) => {
-          const ord = rootOrdinalById.get(comment.id) ?? 1
-          return (
-            <InnerCommentList
-              id={comment.id}
-              key={comment.id}
-              threadKey={`#${ord}`}
-            />
-          )
-        })}
-      </div>
-    </BottomToUpTransitionView>
-  )
-})
-
-const SingleComment: FC<PropsWithChildren<{ id: string; threadKey: string }>> =
-  ({ id, threadKey, children }) => {
+const SingleComment: FC<
+  PropsWithChildren<{ id: string; threadKey: string; onRefresh: () => Promise<unknown> }>
+> = ({ id, threadKey, onRefresh, children }) => {
   const t = useTranslations('comment')
   const tCommon = useTranslations('common')
   const [replyId, setReplyId] = useState('')
@@ -109,18 +113,14 @@ const SingleComment: FC<PropsWithChildren<{ id: string; threadKey: string }>> =
     shallow,
   )
 
-  const { commentIdMap, comments } = useCommentCollection<{
+  const { commentIdMap } = useCommentCollection<{
     commentIdMap: Map<Id, CommentModelWithHighlight>
-    comments: CommentModelWithHighlight[]
   }>(
     (state) => ({
       commentIdMap: state.data,
-      comments: state.comments,
     }),
     shallow,
   )
-
-  const commentCollection = useCommentCollection.getState()
 
   const comment: CommentModelWithHighlight = commentIdMap.get(id)!
 
@@ -134,38 +134,34 @@ const SingleComment: FC<PropsWithChildren<{ id: string; threadKey: string }>> =
         failed: t('failed'),
       })
       try {
-        let data: CommentModel
         if (logged) {
-          data = await apiClient.comment.proxy.reader.reply(comment.id).post({
+          await apiClient.comment.proxy.reader.reply(comment.id).post({
             data: model,
           })
         } else {
-          data = await apiClient.comment.proxy.guest.reply(comment.id).post({
+          await apiClient.comment.proxy.guest.reply(comment.id).post({
             data: model,
           })
         }
         success()
-
-        if (!socketClient.socket.connected) {
-          commentCollection.addComment(data)
-        }
         setReplyId('')
+        await onRefresh()
       } catch (err) {
         error()
         console.error(err)
       }
     },
-     
-    [comment.id, logged],
+
+    [comment.id, logged, onRefresh, t],
   )
   const handleDelete = useCallback(
     (id: string) => async () => {
       await apiClient.comment.proxy(id).delete()
 
       message.success(t('deleteSuccess'))
-      commentCollection.deleteComment(id)
+      await onRefresh()
     },
-    [t],
+    [onRefresh, t],
   )
 
   const url = useMemo(() => {
@@ -229,13 +225,8 @@ const SingleComment: FC<PropsWithChildren<{ id: string; threadKey: string }>> =
         pin: nextPinStatus,
       },
     })
-
-    if (nextPinStatus) {
-      commentCollection.pinComment(comment.id)
-    } else {
-      commentCollection.unPinComment(comment.id)
-    }
-  }, [comment, comments])
+    await onRefresh()
+  }, [comment.id, comment.pin, onRefresh])
 
   return (
     <Comment
@@ -358,34 +349,37 @@ const SingleComment: FC<PropsWithChildren<{ id: string; threadKey: string }>> =
     </Comment>
   )
 }
-const InnerCommentList = memo<{ id: string; threadKey: string }>(
-  ({ id, threadKey }) => {
-    const comment = useCommentCollection((state) => state.data.get(id))
+const InnerCommentList = memo<{
+  id: string
+  threadKey: string
+  onRefresh: () => Promise<unknown>
+}>(({ id, threadKey, onRefresh }) => {
+  const comment = useCommentCollection((state) => state.data.get(id))
 
-    if (!comment) {
-      return null
-    }
-    if (comment.children?.length > 0) {
-      const children = comment.children
+  if (!comment) {
+    return null
+  }
+  if (comment.children?.length > 0) {
+    const children = comment.children
 
-      const childComments = children.map(
-        (child: CommentModel, index: number) => {
-          return (
-            <InnerCommentList
-              id={child.id}
-              key={child.id}
-              threadKey={`${threadKey}#${index + 1}`}
-            />
-          )
-        },
-      )
+    const childComments = children.map(
+      (child: CommentModel, index: number) => {
+        return (
+          <InnerCommentList
+            id={child.id}
+            key={child.id}
+            onRefresh={onRefresh}
+            threadKey={`${threadKey}#${index + 1}`}
+          />
+        )
+      },
+    )
 
-      return (
-        <SingleComment id={comment.id} threadKey={threadKey}>
-          {childComments}
-        </SingleComment>
-      )
-    }
-    return <SingleComment id={comment.id} threadKey={threadKey} />
-  },
-)
+    return (
+      <SingleComment id={comment.id} onRefresh={onRefresh} threadKey={threadKey}>
+        {childComments}
+      </SingleComment>
+    )
+  }
+  return <SingleComment id={comment.id} onRefresh={onRefresh} threadKey={threadKey} />
+})

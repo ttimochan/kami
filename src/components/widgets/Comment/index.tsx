@@ -80,6 +80,12 @@ const CommentWrap: FC<CommentWrapProps> = (props) => {
     [id],
   )
 
+  const refreshCurrentPage = useCallback(async () => {
+    const page = pagination.currentPage || 1
+    const size = pagination.size || 10
+    return fetchComments(page, size)
+  }, [fetchComments, pagination.currentPage, pagination.size])
+
   const handleComment = useCallback(
     async (model) => {
       const { success, error } = await openCommentMessage({
@@ -102,7 +108,7 @@ const CommentWrap: FC<CommentWrapProps> = (props) => {
         }
         requestAnimationFrame(() => {
           success()
-          fetchComments()
+          refreshCurrentPage()
         })
       } catch (e) {
         error()
@@ -110,7 +116,7 @@ const CommentWrap: FC<CommentWrapProps> = (props) => {
         console.error(e)
       }
     },
-    [fetchComments, id, logged, t],
+    [id, logged, refreshCurrentPage, t],
   )
 
   const hash = useHash()
@@ -170,7 +176,7 @@ const CommentWrap: FC<CommentWrapProps> = (props) => {
       <span id="comment-anchor" />
       {commentShow ? (
         <Fragment>
-          <Comments allowComment={allowComment} />
+          <Comments allowComment={allowComment} onRefresh={refreshCurrentPage} />
           <div className="text-center">
             {pagination &&
               pagination.totalPage !== 0 &&

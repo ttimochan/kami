@@ -2,7 +2,6 @@ import { produce } from 'immer'
 import { message } from 'react-message-popup'
 
 import { useAppStore } from '~/atoms/app'
-import { useCommentCollection } from '~/atoms/collections/comment'
 import { useNoteCollection } from '~/atoms/collections/note'
 import { usePageCollection } from '~/atoms/collections/page'
 import { usePostCollection } from '~/atoms/collections/post'
@@ -88,10 +87,6 @@ export const eventHandler = (type: EventTypes, data: any) => {
     case EventTypes.SAY_DELETE: {
       const id = data
       useSayCollection.getState().remove(id)
-      break
-    }
-    case EventTypes.COMMENT_CREATE: {
-      useCommentCollection.getState().addComment(data)
       break
     }
     case EventTypes.DANMAKU_CREATE: {

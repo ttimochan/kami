@@ -2,11 +2,7 @@ import type { AxiosError, AxiosInstance } from 'axios'
 import { CanceledError } from 'axios'
 import { message } from 'react-message-popup'
 
-import {
-  allControllers,
-  createClient,
-  simpleCamelcaseKeys,
-} from '@mx-space/api-client'
+import { allControllers, createClient } from '@mx-space/api-client'
 import { isClientSide } from './env'
 import { API_URL } from '~/constants/env'
 
@@ -28,44 +24,7 @@ const genUUID = () => {
 
 export const apiClient = createClient(axiosAdaptor as any)(API_URL, {
   controllers: allControllers,
-  transformResponse: (data) => normalizeLegacyModel(simpleCamelcaseKeys(data)),
 })
-
-function normalizeLegacyModel<T>(data: T): T {
-  if (Array.isArray(data)) {
-    return data.map((item) => normalizeLegacyModel(item)) as T
-  }
-
-  if (!data || typeof data !== 'object') {
-    return data
-  }
-
-  const record = data as Record<string, any>
-  for (const key of Object.keys(record)) {
-    record[key] = normalizeLegacyModel(record[key])
-  }
-
-  if (record.createdAt !== undefined && record.created === undefined) {
-    record.created = record.createdAt
-  }
-  if (record.modifiedAt !== undefined && record.modified === undefined) {
-    record.modified = record.modifiedAt
-  }
-  if (record.pinAt !== undefined && record.pin === undefined) {
-    record.pin = record.pinAt
-  }
-  if (
-    (record.readCount !== undefined || record.likeCount !== undefined) &&
-    record.count === undefined
-  ) {
-    record.count = {
-      read: record.readCount ?? 0,
-      like: record.likeCount ?? 0,
-    }
-  }
-
-  return record as T
-}
 
 const uuid = genUUID()
 

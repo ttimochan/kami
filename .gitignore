@@ -17,7 +17,7 @@ pages/debug.tsx
 /temp
 
 pages/dev
-
+.DS_Store
 patch/dist
 tmp
 out

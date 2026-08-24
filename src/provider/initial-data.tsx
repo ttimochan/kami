@@ -2,7 +2,7 @@ import mergeWith from 'lodash-es/mergeWith'
 import type { FC } from 'react'
 import { createContext, memo, useEffect, useMemo } from 'react'
 
-import type { AggregateRoot } from '@mx-space/api-client'
+import type { AggregateRoot, PageModel } from '@mx-space/api-client'
 
 import { defaultConfigs } from '~/configs.default'
 import type { KamiConfig } from '~/types/config'
@@ -11,6 +11,7 @@ import { cloneDeep } from '~/utils/_'
 export type InitialDataType = {
   aggregateData: AggregateRoot
   config: KamiConfig
+  pageMeta: Pick<PageModel, 'id' | 'slug' | 'title'>[]
 }
 export const InitialContext = createContext({} as InitialDataType)
 

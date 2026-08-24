@@ -1,7 +1,7 @@
 import type { IncomingMessage } from 'http'
 import { version } from 'react'
 
-import type { AggregateRoot } from '@mx-space/api-client'
+import type { AggregateRoot, PageModel } from '@mx-space/api-client'
 
 import { defaultConfigs } from '~/configs.default'
 import type { KamiConfig } from '~/types/config'
@@ -43,16 +43,19 @@ export async function fetchInitialData(): Promise<InitialDataType> {
     return window.data
   }
 
-  const [aggregateDataState, configSnippetState] = await Promise.allSettled([
-    apiClient.aggregate.getAggregateData(),
-    apiClient.snippet.getByReferenceAndName<KamiConfig>(
-      'theme',
-      process.env.NEXT_PUBLIC_SNIPPET_NAME || 'kami',
-    ),
-  ])
+  const [aggregateDataState, configSnippetState, pageMetaState] =
+    await Promise.allSettled([
+      apiClient.aggregate.getAggregateData(),
+      apiClient.snippet.getByReferenceAndName<KamiConfig>(
+        'theme',
+        process.env.NEXT_PUBLIC_SNIPPET_NAME || 'kami',
+      ),
+      apiClient.page.getList(1, 20, { select: ['id', 'slug', 'title'] }),
+    ])
 
   let aggregateData: AggregateRoot | null = null
   let configSnippet: KamiConfig | null = null
+  let pageMeta: Pick<PageModel, 'id' | 'slug' | 'title'>[] = []
   let reason = undefined as undefined | string
   if (aggregateDataState.status === 'fulfilled') {
     aggregateData = aggregateDataState.value
@@ -68,6 +71,10 @@ export async function fetchInitialData(): Promise<InitialDataType> {
     configSnippet = defaultConfigs as any
   }
 
+  if (pageMetaState.status === 'fulfilled') {
+    pageMeta = pageMetaState.value.data
+  }
+
   // @ts-ignore
-  return { aggregateData, config: configSnippet, reason }
+  return { aggregateData, config: configSnippet, pageMeta, reason }
 }

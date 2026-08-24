@@ -6,6 +6,10 @@ export const useInitialData = () => {
   return useContext(InitialContext).aggregateData
 }
 
+export const usePageMeta = () => {
+  return useContext(InitialContext).pageMeta
+}
+
 export const useThemeConfig = () => {
   const config = useContext(InitialContext).config
 

@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 
 import { uniqBy } from '~/utils/_'
 
-import { useInitialData, useKamiConfig } from './use-initial-data'
+import { useInitialData, useKamiConfig, usePageMeta } from './use-initial-data'
 
 export const useHeaderNavList = () => {
   const {
@@ -10,7 +10,8 @@ export const useHeaderNavList = () => {
       header: { menu },
     },
   } = useKamiConfig()
-  const { pageMeta, categories } = useInitialData()
+  const { categories } = useInitialData()
+  const pageMeta = usePageMeta()
   const mergedMenu = useMemo(() => {
     const merged = menu.map((item) =>
       item.type === 'Note' && item.path === '/notes'
@@ -20,7 +21,7 @@ export const useHeaderNavList = () => {
     const homeMenuIndex = merged.findIndex((m) => m.type === 'Home')
     // 1. merge pages
     const homeMenu = merged[homeMenuIndex]
-    if (!homeMenu || !homeMenu.subMenu || !pageMeta) {
+    if (!homeMenu) {
       return merged
     }
     const models = pageMeta.map((page) => {
@@ -33,8 +34,13 @@ export const useHeaderNavList = () => {
       }
     })
 
-    const old = homeMenu.subMenu
-    homeMenu.subMenu = uniqBy([...old, ...models], 'id' as any) as any
+    merged[homeMenuIndex] = {
+      ...homeMenu,
+      subMenu: uniqBy(
+        [...(homeMenu.subMenu ?? []), ...models],
+        'id' as any,
+      ) as any,
+    }
 
     // 2. merge categories
     {
@@ -52,8 +58,14 @@ export const useHeaderNavList = () => {
           type: 'Custom',
         }
       })
-      const old = postMenu.subMenu
-      postMenu.subMenu = uniqBy([...models, ...old!], 'id' as any) as any
+      const postMenuIndex = merged.indexOf(postMenu)
+      merged[postMenuIndex] = {
+        ...postMenu,
+        subMenu: uniqBy(
+          [...models, ...(postMenu.subMenu ?? [])],
+          'id' as any,
+        ) as any,
+      }
     }
     return merged
   }, [categories, menu, pageMeta])

@@ -36,6 +36,14 @@
     "createdAt": "创建时间",
     "modifiedAt": "修改于"
   },
+  "liveDesk": {
+    "playing": "正在播放",
+    "paused": "已暂停",
+    "active": "正在使用",
+    "open": "打开 {title}",
+    "via": "来自 {player}",
+    "progress": "{currentPosition} / {duration}"
+  },
   "home": {
     "post": "文章",
     "note": "日记",

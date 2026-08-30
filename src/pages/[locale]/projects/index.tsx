@@ -14,7 +14,7 @@ import { apiClient } from '~/utils/client'
 const ProjectView = () => {
   const { data: projects, isLoading: loading } = useSWR(`project`, () =>
     apiClient.project.getAll().then((res) => {
-      return res.data
+      return res
     }),
   )
 

@@ -36,6 +36,14 @@
     "createdAt": "作成日時",
     "modifiedAt": "更新日時"
   },
+  "liveDesk": {
+    "playing": "再生中",
+    "paused": "一時停止",
+    "active": "使用中",
+    "open": "{title} を開く",
+    "via": "{player} から",
+    "progress": "{currentPosition} / {duration}"
+  },
   "home": {
     "post": "記事",
     "note": "日記",

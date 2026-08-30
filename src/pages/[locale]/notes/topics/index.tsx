@@ -17,7 +17,7 @@ const TopicPage: NextPage = () => {
   const [topics, setTopics] = useState([] as TopicModel[])
   useEffect(() => {
     apiClient.topic.getAll().then((res) => {
-      setTopics(res.data)
+      setTopics(res)
     })
   }, [])
   return (

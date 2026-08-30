@@ -21,8 +21,8 @@ export const useSayCollection = createCollection<SayModel, SayCollection>(
 
       async fetchAll() {
         const data = await apiClient.say.getAll()
-        getState().add(data.data)
-        return { ...data }
+        getState().add(data)
+        return data
       },
     }
   },

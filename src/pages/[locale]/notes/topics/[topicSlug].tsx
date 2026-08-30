@@ -99,9 +99,9 @@ const TopicDetailPage: NextPage<TopicModel> = (props) => {
 
         {pager && (
           <Pagination
-            current={pager.currentPage}
+            current={pager.page}
             onChange={handleChangePage}
-            total={pager.totalPage}
+            total={pager.totalPages}
           />
         )}
       </div>

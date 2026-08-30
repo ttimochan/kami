@@ -142,6 +142,9 @@ function:
       - 563534789
       - 1447327083
       - 1450252250
+  live_desk:
+    # 展示 Core Companion 发布的公开活动状态
+    enable: false
   analyze:
     enable: false
     ga: ''

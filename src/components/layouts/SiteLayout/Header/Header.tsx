@@ -21,6 +21,7 @@ import { HeaderActionBasedOnRouterPath } from './HeaderActionBasedOnRouterPath'
 import { HeaderBase } from './HeaderBase'
 import { HeaderDrawer } from './HeaderDrawer'
 import { HeaderDrawerNavigation } from './HeaderDrawerNavigation'
+import { LiveDeskStatus } from './LiveDeskStatus'
 import { MenuList } from './HeaderMenuList'
 import styles from './index.module.css'
 
@@ -131,6 +132,8 @@ export const Header: FC = () => {
               )}
             </div>
           </div>
+
+          <LiveDeskStatus />
 
           <div
             className={styles['more-button']}

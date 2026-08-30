@@ -110,7 +110,7 @@ const PostListPage: NextPage<PaginateResult<PostModel>> = () => {
                 router.push(
                   {
                     pathname: '/posts',
-                    query: { page: String(pagination.currentPage - 1) },
+                    query: { page: String(pagination.page - 1) },
                   },
                   { scroll: true },
                 )
@@ -127,7 +127,7 @@ const PostListPage: NextPage<PaginateResult<PostModel>> = () => {
                 router.push(
                   {
                     pathname: '/posts',
-                    query: { page: String(pagination.currentPage + 1) },
+                    query: { page: String(pagination.page + 1) },
                   },
                   { scroll: true },
                 )

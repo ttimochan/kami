@@ -36,6 +36,14 @@
     "createdAt": "Created at",
     "modifiedAt": "Modified at"
   },
+  "liveDesk": {
+    "playing": "PLAYING",
+    "paused": "PAUSED",
+    "active": "ACTIVE",
+    "open": "Open {title}",
+    "via": "via {player}",
+    "progress": "{currentPosition} / {duration}"
+  },
   "home": {
     "post": "Posts",
     "note": "Notes",

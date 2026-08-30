@@ -32,6 +32,10 @@ interface Function {
     id: number[]
   }
 
+  liveDesk?: {
+    enable: boolean
+  }
+
   banDevtool: {
     enable: boolean
   }

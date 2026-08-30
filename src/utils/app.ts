@@ -50,7 +50,7 @@ export async function fetchInitialData(locale: Locale): Promise<InitialDataType>
       apiClient.aggregate.proxy.get<AggregateRootWithTheme<KamiConfig>>({
         params: { theme: themeName, lang: locale },
       }),
-      apiClient.page.getList(1, 20, { select: ['id', 'slug', 'title'] }),
+      apiClient.page.getList(1, 20),
     ])
 
   let aggregateData: AggregateRootWithTheme<KamiConfig> | null = null

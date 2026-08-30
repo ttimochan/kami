@@ -4,7 +4,7 @@
   "private": false,
   "version": "6.1.0",
   "engines": {
-    "node": ">=v14.21.3"
+    "node": ">=22"
   },
   "pnpm": {
     "peerDependencyRules": {
@@ -64,7 +64,7 @@
   "dependencies": {
     "@floating-ui/react-dom": "2.1.9",
     "@formkit/auto-animate": "0.10.0",
-    "@mx-space/api-client": "4.4.0",
+    "@mx-space/api-client": "5.6.2",
     "@sentry/nextjs": "10.51.0",
     "axios": "1.19.0",
     "clsx": "2.1.1",

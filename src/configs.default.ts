@@ -186,6 +186,9 @@ export const defaultConfigs = {
     player: {
       id: [563534789, 1447327083, 1450252250],
     },
+    liveDesk: {
+      enable: false,
+    },
     analyze: {
       enable: false,
       ga: '',

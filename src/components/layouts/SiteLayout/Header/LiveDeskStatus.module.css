@@ -1,0 +1,154 @@
+.root {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 1;
+  width: min(20rem, 30vw);
+  min-width: 13rem;
+  transform: translate(-50%, -50%);
+}
+
+.trigger {
+  display: block;
+  width: 100%;
+}
+
+.card {
+  @apply flex w-full min-w-0 items-center border-0 p-1 text-left;
+
+  height: 2.5rem;
+  border-radius: 0.75rem;
+  color: var(--black);
+  background: rgb(255 255 255 / 58%);
+  box-shadow: 0 1px 7px rgb(15 23 42 / 8%);
+  transition: transform 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
+}
+
+:global(html.dark) .card {
+  background: rgb(35 35 35 / 62%);
+  box-shadow: 0 1px 8px rgb(0 0 0 / 22%);
+}
+
+.card.clickable {
+  @apply cursor-pointer;
+}
+
+.card.clickable:hover,
+.card.clickable:focus-visible {
+  background: rgb(255 255 255 / 82%);
+  box-shadow: 0 4px 14px rgb(15 23 42 / 15%);
+  transform: translateY(-1px);
+}
+
+:global(html.dark) .card.clickable:hover,
+:global(html.dark) .card.clickable:focus-visible {
+  background: rgb(45 45 45 / 88%);
+}
+
+.icon {
+  @apply flex flex-shrink-0 items-center justify-center overflow-hidden rounded-md;
+
+  width: 2rem;
+  height: 2rem;
+  background: rgb(0 0 0 / 6%);
+}
+
+.icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.icon svg {
+  font-size: 1.25rem;
+}
+
+.copy {
+  @apply ml-2 flex min-w-0 flex-1 flex-col justify-center;
+}
+
+.meta,
+.title {
+  @apply block min-w-0 truncate;
+}
+
+.meta {
+  @apply text-gray-2 flex items-center text-xs font-medium;
+
+  line-height: 1.05rem;
+  letter-spacing: 0.02em;
+}
+
+.title {
+  @apply text-sm font-semibold;
+
+  line-height: 1.1rem;
+}
+
+.meter {
+  @apply mr-1 inline-flex items-end;
+
+  height: 0.7rem;
+  gap: 2px;
+}
+
+.meter i {
+  display: block;
+  width: 2px;
+  height: 0.35rem;
+  border-radius: 1px;
+  background: currentColor;
+  animation: live-desk-meter 850ms ease-in-out infinite alternate;
+}
+
+.meter i:nth-child(2) {
+  height: 0.65rem;
+  animation-delay: -300ms;
+}
+
+.meter i:nth-child(3) {
+  height: 0.48rem;
+  animation-delay: -560ms;
+}
+
+.popover {
+  @apply border-gray-1 bg-light-bg max-w-xs rounded-lg border px-3 py-2 shadow-lg;
+}
+
+:global(html.dark) .popover {
+  @apply border-dark-50 bg-dark-bg;
+}
+
+.popoverTitle {
+  @apply m-0 truncate text-sm font-medium;
+}
+
+.popoverMeta {
+  @apply text-gray-2 m-0 mt-1 truncate text-xs;
+}
+
+@keyframes live-desk-meter {
+  from {
+    transform: scaleY(0.45);
+  }
+
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .meter i {
+    animation: none;
+  }
+
+  .card {
+    transition: none;
+  }
+}
+
+@screen tablet {
+  .root {
+    display: none;
+  }
+}

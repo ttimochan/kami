@@ -54,7 +54,7 @@ const _TagFAB: FC = memo(() => {
 
   const [tags, setTags] = useState<TagModel[]>([])
   const fetchTags = async () => {
-    const { data: tags } = await apiClient.category.getAllTags()
+    const tags = await apiClient.category.getAllTags()
 
     setTags(tags)
   }

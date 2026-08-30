@@ -26,7 +26,7 @@ export const FriendsSection: FC<{
     'home-friends',
     async () => {
       const res = await apiClient.link.getAll()
-      const data = res.data as LinkModel[]
+      const data = res as LinkModel[]
       return shuffle(
         data.filter(
           (i) =>

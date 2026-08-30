@@ -60,7 +60,7 @@ export const LinkCard: FC<LinkCardProps> = (props) => {
               return apiClient.note
                 .getNoteByNid(+params, { lang: locale })
                 .then((res) => {
-                const { title, images, text } = res.data
+                const { title, images, text } = res
                 setCardInfo({
                   title,
                   desc: `${RemoveMarkdown(text || '').slice(0, 50)}...`,

@@ -81,10 +81,10 @@ const CommentWrap: FC<CommentWrapProps> = (props) => {
   )
 
   const refreshCurrentPage = useCallback(async () => {
-    const page = pagination.currentPage || 1
+    const page = pagination.page || 1
     const size = pagination.size || 10
     return fetchComments(page, size)
-  }, [fetchComments, pagination.currentPage, pagination.size])
+  }, [fetchComments, pagination.page, pagination.size])
 
   const handleComment = useCallback(
     async (model) => {
@@ -179,10 +179,10 @@ const CommentWrap: FC<CommentWrapProps> = (props) => {
           <Comments allowComment={allowComment} onRefresh={refreshCurrentPage} />
           <div className="text-center">
             {pagination &&
-              pagination.totalPage !== 0 &&
+              pagination.totalPages !== 0 &&
               pagination.total !== undefined && (
                 <Pagination
-                  current={pagination.currentPage || 1}
+                  current={pagination.page || 1}
                   onChange={(page) => {
                     fetchComments(page)
                     requestAnimationFrame(() => {
@@ -193,7 +193,7 @@ const CommentWrap: FC<CommentWrapProps> = (props) => {
                       )
                     })
                   }}
-                  total={pagination.totalPage}
+                  total={pagination.totalPages}
                 />
               )}
           </div>

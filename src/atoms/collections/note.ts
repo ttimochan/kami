@@ -1,7 +1,7 @@
 import { immerable } from 'immer'
 import { message } from 'react-message-popup'
 
-import type { ModelWithLiked, NoteModel } from '@mx-space/api-client'
+import type { NoteModel } from '@mx-space/api-client'
 
 import type { FetchOption } from '~/atoms/types'
 import type { WithMeta } from '~/types/api-client'
@@ -46,7 +46,7 @@ interface NoteCollection {
       isDeleted?: boolean | undefined
     }
   >
-  fetchLatest(lang?: string): Promise<ModelWithLiked<NoteModelWithId>>
+  fetchLatest(lang?: string): Promise<NoteModelWithId>
   bookmark(id: string): Promise<void>
 }
 
@@ -195,7 +195,7 @@ export const useNoteCollection = createCollection<NoteModelWithId, NoteCollectio
             : await apiClient.note.proxy(id).get<any>({
                 params: { password, lang: options.lang },
               })
-        const noteData = (data.data?.id ? data.data : data) as NoteModelWithId
+        const noteData = data as NoteModelWithId
         const localized = withContentLocale(noteData, locale)
         setState((state) => {
           state.localizedData.set(localizedKey(localized.id, locale), localized)
@@ -212,9 +212,7 @@ export const useNoteCollection = createCollection<NoteModelWithId, NoteCollectio
         const data = await apiClient.note.proxy.latest.get<any>({
           params: { lang },
         })
-        const noteData = (data.data?.id
-          ? data.data
-          : data) as ModelWithLiked<NoteModelWithId>
+        const noteData = data as NoteModelWithId
         const localized = withContentLocale(noteData, lang)
         setState((state) => {
           state.localizedData.set(localizedKey(localized.id, lang), localized)

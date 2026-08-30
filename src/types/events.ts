@@ -28,6 +28,8 @@ export enum EventTypes {
 
   DANMAKU_CREATE = 'DANMAKU_CREATE',
 
+  COMPANION_PRESENCE_CHANGED = 'companion_presence.changed',
+
   RECENTLY_CREATE = 'RECENTLY_CREATE',
   RECENTLY_DElETE = 'RECENTLY_DElETE',
 }

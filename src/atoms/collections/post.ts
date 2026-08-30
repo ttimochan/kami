@@ -1,6 +1,6 @@
 import { immerable } from 'immer'
 
-import type { ModelWithLiked, PostModel } from '@mx-space/api-client'
+import type { PostModel } from '@mx-space/api-client'
 
 import type { WithMeta } from '~/types/api-client'
 import { apiClient } from '~/utils/client'
@@ -22,7 +22,7 @@ interface IPostCollection {
     category: string,
     slug: string,
     lang?: string,
-  ): Promise<ModelWithLiked<PostModelWithMeta>>
+  ): Promise<PostModelWithMeta>
   up(id: string): void
 }
 export const usePostCollection = createCollection<PostModelWithMeta, IPostCollection>(

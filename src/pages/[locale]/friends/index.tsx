@@ -131,7 +131,7 @@ const Footer$: FC = () => {
 
 const Footer = withNoSSR(Footer$)
 FriendsView.getInitialProps = async () => {
-  const { data } = await apiClient.link.getAll()
+  const data = await apiClient.link.getAll()
 
   const friends: LinkModel[] = []
   const collections: LinkModel[] = []

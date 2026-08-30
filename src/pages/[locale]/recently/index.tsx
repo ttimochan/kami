@@ -78,7 +78,7 @@ const RecentlyPage: NextPage = () => {
   const { data: fetchedData, isLoading } = useSWR(
     ['recent', fetchBefore, locale],
     async ([, before]) => {
-      const { data } = await apiClient.shorthand.getList({
+      const data = await apiClient.shorthand.getList({
         before,
         after: undefined,
         size: FETCH_SIZE,

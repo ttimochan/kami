@@ -64,7 +64,7 @@ export const InnerTopicDetail: FC<{ topic: TopicModel }> = (props) => {
             <DividerVertical />
             <span className="inline-flex min-w-0 shrink">
               <Link
-                href={`/data?.data/${data?.data[0].nid}`}
+                href={`/notes/${data?.data[0].nid}`}
                 className="truncate"
               >
                 {data?.data[0]?.title}
